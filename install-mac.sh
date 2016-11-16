@@ -29,6 +29,15 @@ else
 	brew install gtkmm3
 fi
 
+echo "Checking for CMake"
+
+if brew ls --versions cmake > /dev/null; then
+	echo "CMake is installed"
+else
+	echo "Installing CMake"
+	brew install cmake
+fi
+
 rm -rf a3unixlauncher
 mkdir a3unixlauncher
 cd a3unixlauncher
