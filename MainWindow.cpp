@@ -243,8 +243,10 @@ MainWindow::MainWindow(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>
 
     RefreshStatusLabel();
 
+    LOG(1, "Starting monitor thread -- main method");
     std::thread t1(&MainWindow::ArmaStatusThread, this);
     t1.detach();
+    LOG(1, "Created monitor thread -- main method");
 }
 
 void MainWindow::ArmaStatusThread()
@@ -252,16 +254,18 @@ void MainWindow::ArmaStatusThread()
     LOG(1, "Status monitoring thread started");
     while (true)
     {
+        LOG(0, "SMThread: checking for ArmA 3 process");
 #ifdef __APPLE__
         armaPid = Utils::FindProcess("ArmA3");
 #else
         armaPid = Utils::FindProcess("./arma3.i386");
 #endif
+        LOG(0, "SMThread: ArmA 3 process " + std::to_string(armaPid));
         if (armaPid != -1)
             lblStatus->set_text("Status: ArmA 3 running, PID: " + std::to_string(armaPid));
         else
             lblStatus->set_text("Status: ArmA 3 not running");
-
+        LOG(0, "SMThread: 2s sleep");
         //std::cout << "Hai";
         std::this_thread::sleep_for(std::chrono::seconds(2));
     }
