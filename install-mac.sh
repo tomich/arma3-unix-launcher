@@ -5,8 +5,8 @@ if [[ "$OS" != "Darwin" ]]; then
 	echo "This script works only on Mac OS X"
 	exit 1
 fi
-echo "Checking for git"
 
+echo "Checking for git"
 if [ ! -f "`which git`" ]; then
 	echo "Git not found"
 	open https://git-scm.com/download/mac
@@ -14,14 +14,20 @@ if [ ! -f "`which git`" ]; then
 fi
 
 echo "Checking for Homebrew installation..."
-
 if [ ! -f "`which brew`" ]; then
 	echo "Homebrew not found! Starting installation"
 	ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 fi
 
-echo "Checking for Gtkmm3"
+echo "Checking for pkg-config"
+if brew ls --versions pkg-config > /dev/null; then
+	echo "pkg-config is installed"
+else
+	echo "Installing pkg-config"
+	brew install pkg-config
+fi
 
+echo "Checking for Gtkmm3"
 if brew ls --versions gtkmm3 > /dev/null; then
 	echo "Gtkmm3 is installed"
 else
@@ -30,7 +36,6 @@ else
 fi
 
 echo "Checking for CMake"
-
 if brew ls --versions cmake > /dev/null; then
 	echo "CMake is installed"
 else
