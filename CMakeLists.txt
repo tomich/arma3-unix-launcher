@@ -13,8 +13,6 @@ if (NOT RUN_TESTS)
     add_definitions(-DDOCTEST_CONFIG_DISABLE)
 endif ()
 
-add_subdirectory(external/fmt)
-include_directories(external/fmt/include)
 include_directories(external/doctest)
 include_directories(external/nlohmann-json)
 include_directories(external/static-todo)

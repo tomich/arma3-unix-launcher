@@ -77,10 +77,8 @@ void ArmaPathChooserDialog::on_button_browse_arma_path_clicked()
 {
     using namespace std::filesystem;
 
-    std::string format_str = fmt::format("Arma 3 Executable ({})", ARMA3::Definitions::executable_name);
-
-    auto open_executable_dialog = get_open_dialog("Select ArmA 3 executable", QFileDialog::ExistingFile);
-    open_executable_dialog->setNameFilter(format_str.c_str());
+    auto open_executable_dialog = get_open_dialog("Select ArmA 3 executable");
+    open_executable_dialog->setFileMode(QFileDialog::ExistingFile);
     int result = open_executable_dialog->exec();
     if (!result)
         return;
@@ -92,7 +90,8 @@ void ArmaPathChooserDialog::on_button_browse_arma_path_clicked()
 
 void ArmaPathChooserDialog::on_button_browse_workshop_path_clicked()
 {
-    auto open_dir_dialog = get_open_dialog("Select ArmA 3 workshop path", QFileDialog::DirectoryOnly);
+    auto open_dir_dialog = get_open_dialog("Select ArmA 3 workshop path");
+    open_dir_dialog->setOption(QFileDialog::ShowDirsOnly);
     int result = open_dir_dialog->exec();
     if (!result)
         return;
@@ -101,14 +100,13 @@ void ArmaPathChooserDialog::on_button_browse_workshop_path_clicked()
     ui->text_workshop_path->setText(workshop_dir);
 }
 
-std::unique_ptr<QFileDialog> ArmaPathChooserDialog::get_open_dialog(QString const &title, QFileDialog::FileMode mode)
+std::unique_ptr<QFileDialog> ArmaPathChooserDialog::get_open_dialog(QString const &title)
 {
     auto dialog = std::make_unique<QFileDialog>();
     dialog->setFilter(QDir::AllDirs | QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
     dialog->setWindowTitle(title);
-    dialog->setFileMode(mode);
     dialog->setViewMode(QFileDialog::Detail);
-    dialog->setResolveSymlinks(true);
+    dialog->setOption(QFileDialog::DontResolveSymlinks, false);
     dialog->setDirectory(QDir::homePath());
     return dialog;
 }

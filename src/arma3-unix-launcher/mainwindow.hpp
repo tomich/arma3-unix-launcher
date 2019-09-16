@@ -15,7 +15,7 @@ class MainWindow : public QMainWindow
         Q_OBJECT
 
     public:
-        explicit MainWindow(QWidget *parent = nullptr);
+        explicit MainWindow(std::unique_ptr<ARMA3::Client> client, QWidget *parent = nullptr);
         ~MainWindow();
 
         void set_client(std::unique_ptr<ARMA3::Client> client);
@@ -28,8 +28,6 @@ class MainWindow : public QMainWindow
         Ui::MainWindow *ui;
 
         std::unique_ptr<ARMA3::Client> client_;
-
-        void init_table();
 };
 
 #endif // MAINWINDOW_HPP_

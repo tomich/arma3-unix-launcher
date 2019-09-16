@@ -20,11 +20,12 @@ namespace ARMA3::Definitions
     static constexpr const char *do_not_change_name = "!DO_NOT_CHANGE_FILES_IN_THESE_FOLDERS";
 
 #ifdef __linux
-    static constexpr const char *executable_name = "arma3.x86_64";
+    static constexpr const std::array<char const*, 2> executable_names{"arma3.x86_64", "arma3_x64.exe"};
     static constexpr const char *local_share_prefix = ".local/share";
     static constexpr const char *bohemia_interactive_prefix = "bohemiainteractive/arma3";
     static constexpr const char *game_config_path = "GameDocuments/Arma 3/Arma3.cfg";
 #else //__APPLE__
+    static constexpr const std::array<char const*, 1> executable_names{"ArmA3.app"};
     static constexpr const char *executable_name "ArmA3.app"
     static constexpr const char *local_share_prefix = "Library/Application Support";
 #endif

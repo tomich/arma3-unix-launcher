@@ -43,11 +43,18 @@ namespace ARMA3
     {
         path_ = arma_path;
         path_custom_ = path_ / Definitions::symlink_custom_name;
-        path_executable_ = path_ / Definitions::executable_name;
+        for (auto const &executable : Definitions::executable_names)
+        {
+            if (exists(path_ / executable))
+            {
+                path_executable_ = path_ / executable;
+                break;
+            }
+        }
+        if (path_executable_.empty())
+            throw FileNotFoundException("arma3.exe");
         path_workshop_local_ = path_ / Definitions::symlink_workshop_name;
         path_workshop_target_ = target_workshop_path;
-        if (!exists(path_executable_))
-            throw FileNotFoundException(path_executable_);
 
         if (skip_initialization)
             return;
@@ -163,7 +170,7 @@ namespace ARMA3
 
     std::string Client::PickModName(Mod const &mod, std::vector<std::string> const &names)
     {
-        TODO_BEFORE(07, 2019, "Pick mod name from workshop");
+        TODO_BEFORE(11, 2019, "Pick mod name from workshop");
         for (auto const &name : names)
         {
             if (ContainsKey(mod.KeyValue, name))
@@ -379,7 +386,7 @@ TEST_CASE_FIXTURE(ARMA3ClientFixture, "CreateWorkshopSymlink")
     std::vector<std::string> ls_result_expected{"@Remove stamina", "@bigmod"};
 
     REQUIRE(std::filesystem::create_directory(testing_dir));
-    REQUIRE(StdUtils::CreateFile(std::filesystem::path(testing_dir) / ARMA3::Definitions::executable_name));
+    REQUIRE(StdUtils::CreateFile(std::filesystem::path(testing_dir) / ARMA3::Definitions::executable_names[0]));
 
     ARMA3::Client a3c(testing_dir, test_files_path / steam_workshop_dir, true);
     CHECK(a3c.CreateSymlinkToWorkshop());
@@ -510,7 +517,7 @@ TEST_CASE_FIXTURE(ARMA3ClientFixture, "AddCustomMod")
         std::vector<std::string> ls_result_expected{"@Remove stamina", "@bigmod"};
 
         REQUIRE(std::filesystem::create_directory(testing_dir));
-        REQUIRE(StdUtils::CreateFile(std::filesystem::path(testing_dir) / ARMA3::Definitions::executable_name));
+        REQUIRE(StdUtils::CreateFile(std::filesystem::path(testing_dir) / ARMA3::Definitions::executable_names[0]));
 
         ARMA3::Client a3c(testing_dir, test_files_path / steam_workshop_dir);
 
@@ -539,7 +546,7 @@ TEST_CASE_FIXTURE(ARMA3ClientFixture, "AddCustomMod")
         std::vector<std::string> ls_result_expected{"@Remove stamina"};
 
         REQUIRE(std::filesystem::create_directory(testing_dir));
-        REQUIRE(StdUtils::CreateFile(std::filesystem::path(testing_dir) / ARMA3::Definitions::executable_name));
+        REQUIRE(StdUtils::CreateFile(std::filesystem::path(testing_dir) / ARMA3::Definitions::executable_names[0]));
 
         ARMA3::Client a3c(testing_dir, test_files_path / steam_workshop_dir);
         a3c.AddCustomMod(test_files_path / steam_workshop_dir / "1");
@@ -562,7 +569,7 @@ TEST_CASE_FIXTURE(ARMA3ClientFixture, "RemoveCustomMod")
     GIVEN("ARMA3::Client")
     {
         REQUIRE(std::filesystem::create_directory(testing_dir));
-        REQUIRE(StdUtils::CreateFile(std::filesystem::path(testing_dir) / ARMA3::Definitions::executable_name));
+        REQUIRE(StdUtils::CreateFile(std::filesystem::path(testing_dir) / ARMA3::Definitions::executable_names[0]));
 
         ARMA3::Client a3c(testing_dir, test_files_path / steam_workshop_dir);
 

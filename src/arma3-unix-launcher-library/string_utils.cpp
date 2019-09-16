@@ -110,7 +110,7 @@ namespace StringUtils
         std::string path_str = Replace(path.c_str(), "/", "\\");
         if (path.is_absolute())
             return "C:" + path_str;
-        return std::move(path_str);
+        return path_str;
     }
 }
 

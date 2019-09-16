@@ -56,7 +56,7 @@ path Steam::GetGamePathFromInstallPath(path const &install_path, std::string con
 
     VDF vdf;
     vdf.LoadFromFile(manifest_file);
-    return install_path / "steamapps/common" / vdf.KeyValue["AppState/installdir"];;
+    return install_path / "steamapps/common" / vdf.KeyValue["AppState/installdir"];
 }
 
 path Steam::GetWorkshopPath(path const &install_path, std::string const &appid) const

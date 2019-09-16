@@ -59,7 +59,20 @@
              </widget>
             </item>
             <item>
-             <widget class="QModView" name="tableView"/>
+             <widget class="QTableWidget" name="tableWidget">
+              <property name="selectionBehavior">
+               <enum>QAbstractItemView::SelectRows</enum>
+              </property>
+              <property name="columnCount">
+               <number>3</number>
+              </property>
+              <attribute name="horizontalHeaderVisible">
+               <bool>true</bool>
+              </attribute>
+              <column/>
+              <column/>
+              <column/>
+             </widget>
             </item>
            </layout>
           </item>
@@ -78,13 +91,6 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>QModView</class>
-   <extends>QTableView</extends>
-   <header location="global">qmodview.hpp</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

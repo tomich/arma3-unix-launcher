@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     Steam steam;
     std::unique_ptr<ARMA3::Client> client;
 
-    /*for (auto const &path : steam.GetInstallPaths())
+    for (auto const &path : steam.GetInstallPaths())
     {
         try
         {
@@ -61,12 +61,12 @@ int main(int argc, char *argv[])
         fmt::print("Arma3: {}\nWorkshop: {}\n", apcd.arma_path_, apcd.workshop_path_);
 
         client = std::make_unique<ARMA3::Client>(apcd.arma_path_, apcd.workshop_path_);
-    }*/
+    }
 
-    client = std::make_unique<ARMA3::Client>("/home/muttley/git/fake/arma", "/home/muttley/git/fake/workshop");
+    //client = std::make_unique<ARMA3::Client>("/home/muttley/git/fake/arma", "/home/muttley/git/fake/workshop");
 
-    MainWindow w;
-    w.set_client(std::move(client));
+    MainWindow w(std::move(client));
+    //w.set_client(std::move(client));
     w.show();
 
     return a.exec();
