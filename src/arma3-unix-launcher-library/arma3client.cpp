@@ -289,7 +289,7 @@ class ARMA3ClientFixture : public Tests::Fixture
             std::filesystem::create_directory(client_tests_dir);
         }
 
-        ~ARMA3ClientFixture()
+        ~ARMA3ClientFixture() noexcept(false)
         {
             std::filesystem::remove_all(client_tests_dir);
         }
