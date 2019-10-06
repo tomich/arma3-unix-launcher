@@ -21,31 +21,27 @@ namespace StringUtils
 
     std::filesystem::path ToWindowsPath(std::filesystem::path const &path);
 
-    template<typename ret_type = std::string_view, typename argument = std::string>
-    ret_type TrimLeft(argument const &text, std::string const &to_trim = " \n\r\t")
+    constexpr std::string_view trim_left(std::string_view text,
+                                         std::string_view const to_trim = std::string_view(" \n\r\t\0", 5))
     {
-        size_t startpos = text.find_first_not_of(to_trim);
-        if constexpr(std::is_same_v<ret_type, std::string_view> &&std::is_same_v<argument, std::string>)
-            return (startpos == std::string::npos) ? std::string_view() : std::string_view(text.c_str() + startpos,
-                    text.size() - startpos);
-        else //std::string ret_type
-            return (startpos == std::string::npos) ? "" : text.substr(startpos);
+        text.remove_prefix(std::min(text.find_first_not_of(to_trim), text.size()));
+        return text;
     }
 
-    template<typename ret_type = std::string_view, typename argument = std::string>
-    ret_type TrimRight(argument const &text, std::string const &to_trim = " \n\r\t")
+    constexpr std::string_view trim_right(std::string_view text,
+                                          std::string_view const to_trim = std::string_view(" \n\r\t\0", 5))
     {
-        size_t endpos = text.find_last_not_of(to_trim);
-        if constexpr(std::is_same_v<ret_type, std::string_view> &&std::is_same_v<argument, std::string>)
-            return (endpos == std::string::npos) ? std::string_view() : std::string_view(text.c_str(), endpos + 1);
-        else //std::string ret_type
-            return (endpos == std::string::npos) ? "" : text.substr(0, endpos + 1);
+        size_t const end_pos = text.find_last_not_of(to_trim);
+        if (end_pos != std::string_view::npos)
+            text.remove_suffix(text.length() - end_pos - 1);
+
+        return text;
     }
 
-    template<typename ret_type = std::string_view, typename argument = std::string>
-    ret_type Trim(argument const &text, std::string const &to_trim = " \n\r\t")
+    constexpr std::string_view trim(std::string_view text,
+                                    std::string_view const to_trim = std::string_view(" \n\r\t\0", 5))
     {
-        return TrimLeft<ret_type, ret_type>(TrimRight<ret_type, argument>(text, to_trim));
+        return trim_left(trim_right(text, to_trim));
     }
 }
 

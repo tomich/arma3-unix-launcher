@@ -17,7 +17,7 @@ using std::filesystem::path;
 Steam::Steam(std::vector<path> search_paths)
 {
     steam_path_ = "";
-    for (const auto &search_path : search_paths)
+    for (auto const &search_path : search_paths)
     {
         path replace_var = Replace(search_path.c_str(), "$HOME", getenv("HOME"));
         std::string final_path = replace_var / config_path_;
@@ -44,7 +44,7 @@ std::vector<path> Steam::GetInstallPaths() const
     VDF vdf;
     vdf.LoadFromFile(steam_path_ / config_path_);
 
-    for (const auto &key : vdf.GetValuesWithFilter("BaseInstallFolder"))
+    for (auto const &key : vdf.GetValuesWithFilter("BaseInstallFolder"))
         ret.emplace_back(key);
 
     return ret;

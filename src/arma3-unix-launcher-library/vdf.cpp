@@ -15,7 +15,7 @@ VDF::VDF() noexcept
 std::vector<std::string> VDF::GetValuesWithFilter(std::string const &filter)
 {
     std::vector<std::string> result;
-    for (const auto &[key, value] : KeyValue)
+    for (auto const &[key, value] : KeyValue)
     {
         if (key.find(filter) != std::string::npos)
             result.emplace_back(value);
@@ -23,13 +23,13 @@ std::vector<std::string> VDF::GetValuesWithFilter(std::string const &filter)
     return result;
 }
 
-void VDF::LoadFromFile(const std::filesystem::path &path, bool append)
+void VDF::LoadFromFile(std::filesystem::path const &path, bool append)
 {
     std::string text = StdUtils::FileReadAllText(path);
     LoadFromText(text, append);
 }
 
-void VDF::LoadFromText(const std::string &text, bool append)
+void VDF::LoadFromText(std::string const &text, bool append)
 {
     if (!append)
         KeyValue.clear();
@@ -39,7 +39,7 @@ void VDF::LoadFromText(const std::string &text, bool append)
 void VDF::AddKeyValuePair()
 {
     std::string key_path;
-    for (const auto &str : hierarchy_)
+    for (auto const &str : hierarchy_)
         key_path += str + "/";
     key_path += key_;
     KeyValue[key_path] = value_;
@@ -47,7 +47,7 @@ void VDF::AddKeyValuePair()
     value_ = "";
 }
 
-std::string VDF::RemoveWhitespaces(const std::string &text)
+std::string VDF::RemoveWhitespaces(std::string const &text)
 {
     /*
      * This crashes, is the string too long?
@@ -70,7 +70,7 @@ std::string VDF::RemoveWhitespaces(const std::string &text)
     return ret;
 }
 
-void VDF::ParseVDF(const std::string &text)
+void VDF::ParseVDF(std::string const &text)
 {
     state_ = VDFState::LookingForKey;
     key_ = "";

@@ -10,7 +10,7 @@
 
 #include "exceptions/syntax_error.hpp"
 
-std::string CppFilter::RemoveClass(const std::string &class_name)
+std::string CppFilter::RemoveClass(std::string const &class_name)
 {
     auto occurences = FindAllClassOccurences(class_name);
     if (occurences.size() == 0)
@@ -27,7 +27,7 @@ std::string CppFilter::RemoveClass(const std::string &class_name)
     return ret;
 }
 
-std::vector<size_t> CppFilter::FindAllClassOccurences(const std::string &class_name)
+std::vector<size_t> CppFilter::FindAllClassOccurences(std::string const &class_name)
 {
     std::vector<size_t> ret;
     size_t pos = class_text_.find(class_name);

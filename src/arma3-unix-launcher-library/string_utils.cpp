@@ -169,17 +169,17 @@ TEST_CASE("Trim")
     const std::string trimmed_right = "\n\n\n\n\n\n    test string";
     const std::string trimmed = "test string";
 
-    CHECK_EQ(Trim(to_trim), trimmed);
-    CHECK_EQ(TrimLeft(to_trim), trimmed_left);
-    CHECK_EQ(TrimRight(to_trim), trimmed_right);
+    CHECK_EQ(trim(to_trim), trimmed);
+    CHECK_EQ(trim_left(to_trim), trimmed_left);
+    CHECK_EQ(trim_right(to_trim), trimmed_right);
 
-    CHECK_EQ(Trim(trimmed), trimmed);
+    CHECK_EQ(trim(trimmed), trimmed);
 
-    auto trim_with_copy = Trim<std::string, std::string>(to_trim);
+    auto trim_with_copy = trim(to_trim);
     CHECK_EQ(trim_with_copy, trimmed);
 
     std::string_view trim_with_view_argument(to_trim);
-    auto trimmed_view = Trim<std::string_view, std::string_view>(trim_with_view_argument);
+    auto trimmed_view = trim(trim_with_view_argument);
     CHECK_EQ(trimmed_view, trimmed);
 }
 

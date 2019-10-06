@@ -13,22 +13,22 @@ namespace ARMA3::Definitions
 
     static constexpr const char *app_id = "107410";
 
-    static const std::array<const char *, 20> exclusions{"!custom", "!workshop", "Addons", "Argo", "BattlEye", "Curator", "Dta", "Expansion", "Heli", "Jets", "Kart", "Keys", "MPMissions", "Mark", "Missions", "Orange", "Tacops", "Tank", "legal", "steam_shader_cache"};
+    static const std::array<char const *, 21> exclusions{"!custom", "!workshop", "!DO_NOT_CHANGE_FILES_IN_THESE_FOLDERS", "Addons", "Argo", "BattlEye", "Curator", "Dta", "Expansion", "Heli", "Jets", "Kart", "Keys", "MPMissions", "Mark", "Missions", "Orange", "Tacops", "Tank", "legal", "steam_shader_cache"};
 
     static constexpr const char *symlink_workshop_name = "!workshop";
     static constexpr const char *symlink_custom_name = "!custom";
     static constexpr const char *do_not_change_name = "!DO_NOT_CHANGE_FILES_IN_THESE_FOLDERS";
 
-#ifdef __linux
-    static constexpr const std::array<char const*, 2> executable_names{"arma3.x86_64", "arma3_x64.exe"};
+    #ifdef __linux
+    static constexpr const std::array<char const *, 2> executable_names {"arma3.x86_64", "arma3_x64.exe"};
     static constexpr const char *local_share_prefix = ".local/share";
     static constexpr const char *bohemia_interactive_prefix = "bohemiainteractive/arma3";
     static constexpr const char *game_config_path = "GameDocuments/Arma 3/Arma3.cfg";
-#else //__APPLE__
-    static constexpr const std::array<char const*, 1> executable_names{"ArmA3.app"};
+    #else //__APPLE__
+    static constexpr const std::array<char const *, 1> executable_names {"ArmA3.app"};
     static constexpr const char *executable_name "ArmA3.app"
     static constexpr const char *local_share_prefix = "Library/Application Support";
-#endif
+    #endif
 }
 
 namespace ARMA3
@@ -40,7 +40,7 @@ namespace ARMA3
                    bool skip_initialization = false);
 
             bool CreateSymlinkToWorkshop();
-            void CreateArmaCfg(std::vector<Mod> const &mod_list, std::filesystem::path cfg_path);
+            void CreateArmaCfg(std::vector<Mod> const &mod_list, std::filesystem::path cfg_path = "");
             bool RefreshMods();
             void Start(std::string const &arguments);
             void AddCustomMod(std::filesystem::path const &path);

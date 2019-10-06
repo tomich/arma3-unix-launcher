@@ -5,6 +5,8 @@
 #include <map>
 #include <string>
 
+#include <fmt/format.h>
+
 class Mod
 {
     public:

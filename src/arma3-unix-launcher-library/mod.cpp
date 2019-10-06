@@ -11,36 +11,36 @@
 void Mod::LoadAllCPP()
 {
     KeyValue.clear();
-    for (const auto &cppfile : StdUtils::Ls(path_))
+    for (auto const &cppfile : StdUtils::Ls(path_))
     {
         if (StringUtils::EndsWith(cppfile, ".cpp"))
             LoadFromFile(path_ + "/" + cppfile, true);
     }
 }
 
-void Mod::LoadFromFile(const std::filesystem::path &path, bool append)
+void Mod::LoadFromFile(std::filesystem::path const &path, bool append)
 {
     return LoadFromText(StdUtils::FileReadAllText(path), append);
 }
 
-void Mod::LoadFromText(const std::string &text, bool append)
+void Mod::LoadFromText(std::string const &text, bool append)
 {
     if (!append)
         KeyValue.clear();
     ParseCPP(RemoveWhitespacesAndComments(text));
 }
 
-std::string Mod::RemoveWhitespacesAndComments(const std::string &text)
+std::string Mod::RemoveWhitespacesAndComments(std::string const &text)
 {
     std::regex remove_whitespaces(R"(\s+(?=([^"]*"[^"]*")*[^"]*$))");
     std::regex remove_comments(R"(\s+(?=([^"]*"[^"]*")*[^"]*$))");
     return std::regex_replace(std::regex_replace(text, remove_comments, ""), remove_whitespaces, "");
 }
 
-void Mod::ParseCPP(const std::string &text)
+void Mod::ParseCPP(std::string const &text)
 {
     std::vector<std::string_view> lines = StringUtils::Split(text, ";");
-    for (const auto &line : StringUtils::Split(text, ";"))
+    for (auto const &line : StringUtils::Split(text, ";"))
     {
         size_t split_place = line.find('=');
         if (split_place == std::string_view::npos)

@@ -65,7 +65,7 @@ namespace ARMA3
         create_directory(path_custom_);
     }
 
-    void Client::CreateArmaCfg(std::vector<Mod> const &mod_list, std::filesystem::path cfg_path = "")
+    void Client::CreateArmaCfg(std::vector<Mod> const &mod_list, std::filesystem::path cfg_path)
     {
         if (cfg_path.empty())
             cfg_path = GetCfgPath();
@@ -82,18 +82,18 @@ namespace ARMA3
         constexpr char const *mod_template =
             "    class Mod{}" "\n"
             "    {{" "\n"
-            R"(        dir="{}";)" "\n"
+            R"(        dir={};)" "\n"
             R"(        name="{}";)" "\n"
             R"(        origin="GAME DIR";)" "\n"
-            R"(        fullPath="{}";)" "\n"
+            R"(        fullPath={};)" "\n"
             "    }};" "\n";
 
         int mod_number = 1;
         for (auto &mod : mod_list)
         {
-            path mod_path_absolute = Trim<std::string, std::string>(mod.path_, "\"");
+            path mod_path_absolute = trim(mod.path_, "\"");
             path final_path = StringUtils::ToWindowsPath(mod_path_absolute);
-            path dir = Trim<std::string, std::string>(mod_path_absolute.filename(), "\"");
+            path dir = trim(mod_path_absolute.filename().string(), "\"");
             auto name = mod.GetValueOrReturnDefault(dir, "name", "dir", "tooltip");
 
             stripped_config += fmt::format(mod_template, mod_number, dir, name, final_path);
@@ -107,7 +107,7 @@ namespace ARMA3
 
     void Client::Start(std::string const &arguments)
     {
-        system(("steam --applaunch 107410 " + arguments).c_str());
+        system(("steam -applaunch 107410 " + arguments).c_str());
     }
 
     void Client::AddCustomMod(path const &mod_path)

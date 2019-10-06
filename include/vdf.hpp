@@ -11,8 +11,8 @@ class VDF
     public:
         VDF() noexcept;
 
-        void LoadFromFile(const std::filesystem::path &path, bool append = false);
-        void LoadFromText(const std::string &text, bool append = false);
+        void LoadFromFile(std::filesystem::path const &path, bool append = false);
+        void LoadFromText(std::string const &text, bool append = false);
 
         std::vector<std::string> GetValuesWithFilter(std::string const &filter);
 
@@ -20,8 +20,8 @@ class VDF
 
     private:
         void AddKeyValuePair();
-        std::string RemoveWhitespaces(const std::string &text);
-        void ParseVDF(const std::string &text);
+        std::string RemoveWhitespaces(std::string const &text);
+        void ParseVDF(std::string const &text);
         void ProcessChar(char c);
         void LookForKey(char c);
         void LookForValue(char c);

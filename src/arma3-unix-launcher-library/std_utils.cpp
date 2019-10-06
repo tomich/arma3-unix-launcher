@@ -14,7 +14,7 @@ namespace StdUtils
     std::vector<std::string> Ls(std::filesystem::path const &path, bool set_lowercase)
     {
         std::vector<std::string> ret;
-        for (const auto &entity : std::filesystem::directory_iterator(path))
+        for (auto const &entity : std::filesystem::directory_iterator(path))
         {
             if (set_lowercase)
                 ret.emplace_back(StringUtils::Lowercase(entity.path().filename()));

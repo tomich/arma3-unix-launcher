@@ -1,6 +1,6 @@
 #include "exceptions/file_no_access.hpp"
 
-FileNoAccessException::FileNoAccessException(const std::string &path)
+FileNoAccessException::FileNoAccessException(std::string const &path)
 {
     msg_ = "Cannot access file: " + path;
 }

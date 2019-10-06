@@ -19,16 +19,6 @@
 
 int main(int argc, char *argv[])
 {
-    /*using json = nlohmann::json;
-    json js;
-    js["sometext"] = 5;
-    js["mod"] = {"xd", "one", "two"};
-    fmt::print("{}\n", js.dump(4));
-
-    for (const auto &mod : js["mod"])
-        fmt::print("Mod: {}\n", mod);
-    return 1;*/
-
     QApplication a(argc, argv);
 
     Steam steam;

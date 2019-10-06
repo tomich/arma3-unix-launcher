@@ -26,7 +26,7 @@ class MainWindow : public QMainWindow
 
         void on_pushButton_clicked();
 
-private:
+    private:
         Ui::MainWindow *ui;
 
         std::unique_ptr<ARMA3::Client> client_;

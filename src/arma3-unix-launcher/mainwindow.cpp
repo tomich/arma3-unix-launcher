@@ -9,6 +9,8 @@
 
 #include <QResizeEvent>
 
+#include <optional>
+
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 #include <nlohmann/json.hpp>
@@ -24,16 +26,16 @@ MainWindow::MainWindow(std::unique_ptr<ARMA3::Client> client, QWidget *parent) :
     auto tableWidget = ui->tableWidget;
     tableWidget->clear();
     tableWidget->setHorizontalHeaderLabels({"Enabled", "Name", "Workshop ID"});
-    tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+    tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
 
     auto add_item = [&tableWidget](bool enabled, std::string name, std::string workshop_id)
     {
         int id = tableWidget->rowCount();
         tableWidget->insertRow(id);
 
-        QWidget* checkbox_widget = new QWidget();
-        QHBoxLayout* checkbox_layout = new QHBoxLayout(checkbox_widget);
-        QCheckBox* checkbox = new QCheckBox();
+        QWidget *checkbox_widget = new QWidget();
+        QHBoxLayout *checkbox_layout = new QHBoxLayout(checkbox_widget);
+        QCheckBox *checkbox = new QCheckBox();
 
         checkbox_layout->addWidget(checkbox);
         checkbox_layout->setAlignment(Qt::AlignCenter);
@@ -50,7 +52,8 @@ MainWindow::MainWindow(std::unique_ptr<ARMA3::Client> client, QWidget *parent) :
         tableWidget->setItem(id, 1, new QTableWidgetItem(name.c_str()));
         tableWidget->setItem(id, 2, new QTableWidgetItem(workshop_id.c_str()));
 
-        for (int i = 1; i <= 2; ++i) {
+        for (int i = 1; i <= 2; ++i)
+        {
             auto item = tableWidget->item(id, i);
             item->setFlags(item->flags() ^ Qt::ItemIsEditable);
             item->setTextAlignment(Qt::AlignCenter);
@@ -60,7 +63,8 @@ MainWindow::MainWindow(std::unique_ptr<ARMA3::Client> client, QWidget *parent) :
     client_ = std::move(client);
     client_->RefreshMods();
     for (auto const &i : client_->mods_workshop_)
-        add_item(false, i.GetValueOrReturnDefault("name", "cannot read name"), StringUtils::Replace(i.path_, client_->GetPath(), "~arma"));
+        add_item(false, i.GetValueOrReturnDefault("name", "cannot read name"), i.GetValueOrReturnDefault("publishedid",
+                 "cannot read id"));
 }
 
 MainWindow::~MainWindow()
@@ -87,9 +91,9 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
 struct MiniMod
 {
-   bool enabled;
-   std::string name;
-   std::string workshop_id;
+    bool enabled;
+    std::string name;
+    std::string workshop_id;
 };
 
 
@@ -103,7 +107,7 @@ void MainWindow::on_pushButton_clicked()
         std::string name, workshop_id;
 
         auto cellWidget = table->cellWidget(index, 0);
-        auto checkbox = cellWidget->findChild<QCheckBox*>();
+        auto checkbox = cellWidget->findChild<QCheckBox *>();
 
         enabled = checkbox->checkState() == Qt::CheckState::Checked;
         name = table->item(index, 1)->text().toStdString();
@@ -114,13 +118,34 @@ void MainWindow::on_pushButton_clicked()
     nlohmann::json json;
     for (int i = 0; i < table->rowCount(); ++i)
     {
-       nlohmann::json item;
-       auto mod = get_item(i);
-       item["enabled"] = mod.enabled;
-       item["name"] = mod.name;
-       item["id"] = mod.workshop_id;
-       json.push_back(item);
+        nlohmann::json item;
+        auto mod = get_item(i);
+        item["enabled"] = mod.enabled;
+        item["name"] = mod.name;
+        item["id"] = mod.workshop_id;
+        json.push_back(item);
     }
 
     fmt::print("{}", json.dump(4));
+
+    auto find_mod = [this](std::string workshop_id)
+    {
+        for (auto const &mod : client_->mods_workshop_)
+            if (mod.GetValueOrReturnDefault("publishedid", "-1") == workshop_id)
+                return std::optional<Mod>(mod);
+        return std::optional<Mod>();
+    };
+
+    std::vector<Mod> mods;
+    for (auto const &mod : json)
+    {
+        if (mod["enabled"])
+        {
+            auto mod_2 = find_mod(mod["id"]);
+            if (mod_2.has_value())
+                mods.push_back(*mod_2);
+        }
+    }
+    client_->CreateArmaCfg(mods);
+    client_->Start("");
 }
