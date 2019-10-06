@@ -11,6 +11,7 @@
 
 #include <fmt/format.h>
 #include <fmt/ostream.h>
+#include <nlohmann/json.hpp>
 
 #include "string_utils.hpp"
 
@@ -82,4 +83,44 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     ui->tabWidget->setStyleSheet(stylesheet);
     */
     QMainWindow::resizeEvent(event);
+}
+
+struct MiniMod
+{
+   bool enabled;
+   std::string name;
+   std::string workshop_id;
+};
+
+
+void MainWindow::on_pushButton_clicked()
+{
+    auto table = ui->tableWidget;
+
+    auto get_item = [&table](int index)
+    {
+        bool enabled;
+        std::string name, workshop_id;
+
+        auto cellWidget = table->cellWidget(index, 0);
+        auto checkbox = cellWidget->findChild<QCheckBox*>();
+
+        enabled = checkbox->checkState() == Qt::CheckState::Checked;
+        name = table->item(index, 1)->text().toStdString();
+        workshop_id = table->item(index, 2)->text().toStdString();
+        return MiniMod{enabled, name, workshop_id};
+    };
+
+    nlohmann::json json;
+    for (int i = 0; i < table->rowCount(); ++i)
+    {
+       nlohmann::json item;
+       auto mod = get_item(i);
+       item["enabled"] = mod.enabled;
+       item["name"] = mod.name;
+       item["id"] = mod.workshop_id;
+       json.push_back(item);
+    }
+
+    fmt::print("{}", json.dump(4));
 }

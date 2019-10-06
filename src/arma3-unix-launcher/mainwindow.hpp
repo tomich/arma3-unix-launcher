@@ -24,7 +24,9 @@ class MainWindow : public QMainWindow
 
     private slots:
 
-    private:
+        void on_pushButton_clicked();
+
+private:
         Ui::MainWindow *ui;
 
         std::unique_ptr<ARMA3::Client> client_;
