@@ -13,21 +13,21 @@ namespace ARMA3::Definitions
 
     static constexpr const char *app_id = "107410";
 
-    static const std::array<char const *, 21> exclusions{"!custom", "!workshop", "!DO_NOT_CHANGE_FILES_IN_THESE_FOLDERS", "Addons", "Argo", "BattlEye", "Curator", "Dta", "Expansion", "Heli", "Jets", "Kart", "Keys", "MPMissions", "Mark", "Missions", "Orange", "Tacops", "Tank", "legal", "steam_shader_cache"};
+    static const std::array<char const *, 22> exclusions{"!custom", "!workshop", "!DO_NOT_CHANGE_FILES_IN_THESE_FOLDERS", "Addons", "Argo", "BattlEye", "Curator", "Dta", "Expansion", "fontconfig", "Heli", "Jets", "Kart", "Keys", "MPMissions", "Mark", "Missions", "Orange", "Tacops", "Tank", "legal", "steam_shader_cache"};
 
-    static constexpr const char *symlink_workshop_name = "!workshop";
-    static constexpr const char *symlink_custom_name = "!custom";
-    static constexpr const char *do_not_change_name = "!DO_NOT_CHANGE_FILES_IN_THESE_FOLDERS";
+    static constexpr char const *symlink_workshop_name = "!workshop";
+    static constexpr char const *symlink_custom_name = "!custom";
+    static constexpr char const *do_not_change_name = "!DO_NOT_CHANGE_FILES_IN_THESE_FOLDERS";
 
     #ifdef __linux
-    static constexpr const std::array<char const *, 2> executable_names {"arma3.x86_64", "arma3_x64.exe"};
-    static constexpr const char *local_share_prefix = ".local/share";
-    static constexpr const char *bohemia_interactive_prefix = "bohemiainteractive/arma3";
-    static constexpr const char *game_config_path = "GameDocuments/Arma 3/Arma3.cfg";
+    static constexpr std::array<char const *, 2> const executable_names {"arma3.x86_64", "arma3_x64.exe"};
+    static constexpr char const *local_share_prefix = ".local/share";
+    static constexpr char const *bohemia_interactive_prefix = "bohemiainteractive/arma3";
+    static constexpr char const *game_config_path = "GameDocuments/Arma 3/Arma3.cfg";
     #else //__APPLE__
-    static constexpr const std::array<char const *, 1> executable_names {"ArmA3.app"};
-    static constexpr const char *executable_name "ArmA3.app"
-    static constexpr const char *local_share_prefix = "Library/Application Support";
+    static constexpr std::array<char const *, 1> const executable_names {"ArmA3.app"};
+    static constexpr char const *executable_name "ArmA3.app"
+    static constexpr char const *local_share_prefix = "Library/Application Support";
     #endif
 }
 

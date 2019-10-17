@@ -24,18 +24,6 @@ using namespace std::filesystem;
 using namespace StdUtils;
 using namespace StringUtils;
 
-/*
- * fmt weirdly handles std::filesystem::path
- * it wraps whole path in " ", also it displays
- * backslash: R"(\)"
- * as two backslashes: R"(\\)"
- */
-namespace fmt
-{
-    template <>
-    struct formatter<std::filesystem::path> : formatter<std::string> {};
-}
-
 namespace ARMA3
 {
     Client::Client(std::filesystem::path const &arma_path, std::filesystem::path const &target_workshop_path,
@@ -75,18 +63,19 @@ namespace ARMA3
 
         CppFilter cpp_filter{existing_config};
         auto stripped_config = cpp_filter.RemoveClass("class ModLauncherList");
-        stripped_config +=
-            "class ModLauncherList" "\n"
-            "{" "\n";
+        stripped_config += R"cpp(class ModLauncherList
+{
+)cpp";
 
         constexpr char const *mod_template =
-            "    class Mod{}" "\n"
-            "    {{" "\n"
-            R"(        dir={};)" "\n"
-            R"(        name="{}";)" "\n"
-            R"(        origin="GAME DIR";)" "\n"
-            R"(        fullPath={};)" "\n"
-            "    }};" "\n";
+            R"cpp(    class Mod{}
+    {{
+        dir="{}";
+        name="{}";
+        origin="GAME DIR";
+        fullPath="{}";
+    }};
+)cpp";
 
         int mod_number = 1;
         for (auto &mod : mod_list)
@@ -96,11 +85,11 @@ namespace ARMA3
             path dir = trim(mod_path_absolute.filename().string(), "\"");
             auto name = mod.GetValueOrReturnDefault(dir, "name", "dir", "tooltip");
 
-            stripped_config += fmt::format(mod_template, mod_number, dir, name, final_path);
+            stripped_config += fmt::format(mod_template, mod_number, dir.string(), name, final_path.string());
             ++mod_number;
         }
 
-        stripped_config += "};" "\n";
+        stripped_config += "};\n";
 
         FileWriteAllText(cfg_path, stripped_config);
     }
@@ -489,9 +478,9 @@ TEST_CASE_FIXTURE(ARMA3ClientFixture, "Start")
 
     std::array<std::string, 3> call_arguments_array
     {
-        "--applaunch 107410",
-        "--applaunch 107410 -cpuCount=4",
-        "--applaunch 107410 -exThreads=7 -cpuCount=4 -world=empty -skipIntro"
+        "-applaunch 107410",
+        "-applaunch 107410 -cpuCount=4",
+        "-applaunch 107410 -exThreads=7 -cpuCount=4 -world=empty -skipIntro"
     };
 
     for (size_t i = 0; i < arguments_array.size(); ++i)

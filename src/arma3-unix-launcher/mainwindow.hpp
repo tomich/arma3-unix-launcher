@@ -2,8 +2,11 @@
 #define MAINWINDOW_HPP_
 
 #include <QMainWindow>
+#include <QTableWidgetItem>
 
 #include <arma3client.hpp>
+
+#include "ui_mod.hpp"
 
 namespace Ui
 {
@@ -20,8 +23,6 @@ class MainWindow : public QMainWindow
 
         void set_client(std::unique_ptr<ARMA3::Client> client);
 
-        void resizeEvent(QResizeEvent *event) override;
-
     private slots:
 
         void on_pushButton_clicked();
@@ -30,6 +31,13 @@ class MainWindow : public QMainWindow
         Ui::MainWindow *ui;
 
         std::unique_ptr<ARMA3::Client> client_;
+
+        void add_item(QTableWidget &table_widget, UiMod const& mod);
+        void initialize_table_widget(QTableWidget &table_widget, QStringList const& column_names);
+
+        std::vector<UiMod> get_mods(QTableWidget &table_widget);
+
+        void checkbox_changed(int state);
 };
 
 #endif // MAINWINDOW_HPP_
