@@ -92,7 +92,8 @@ namespace Tests::Utils
     std::map<std::string, std::string> random_mod_map
     {
         {"name", "Random Mod"},
-        {"description", "Another mod for unit-tests"}
+        {"description", "Another mod for unit-tests"},
+        {"publishedid", "@Random_Mod"}
     };
 
     std::string valid_config_file =
