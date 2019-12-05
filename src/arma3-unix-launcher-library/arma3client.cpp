@@ -57,6 +57,12 @@ namespace ARMA3
     {
         if (cfg_path.empty())
             cfg_path = GetCfgPath();
+        if (!exists(cfg_path))
+        {
+            if (!exists(cfg_path.parent_path()))
+                create_directories(cfg_path.parent_path());
+            StdUtils::CreateFile(cfg_path);
+        }
         std::string existing_config = FileReadAllText(cfg_path);
         if (!exists(cfg_path.parent_path()))
             throw PathNoAccessException(cfg_path);
@@ -230,6 +236,12 @@ namespace ARMA3
             for (auto const &cppfile : StdUtils::Ls(mod_dir))
                 if (StringUtils::EndsWith(cppfile, ".cpp"))
                     m.LoadFromFile(mod_dir / cppfile, true);
+            if (!StdUtils::ContainsKey(m.KeyValue, "publishedid")) {
+              if (is_symlink(mod_dir))
+                m.KeyValue["publishedid"] = read_symlink(mod_dir).filename();
+              else
+                m.KeyValue["publishedid"] = ent;
+            }
             target.emplace_back(std::move(m));
         }
 

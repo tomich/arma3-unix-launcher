@@ -146,7 +146,7 @@
              </layout>
             </item>
             <item>
-             <widget class="QLabel" name="label_3">
+             <widget class="QLabel" name="label_selected_mods">
               <property name="frameShape">
                <enum>QFrame::Box</enum>
               </property>

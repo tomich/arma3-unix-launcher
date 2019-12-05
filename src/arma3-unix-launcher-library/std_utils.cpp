@@ -41,6 +41,29 @@ namespace StdUtils
             throw std::filesystem::filesystem_error("Parent dir does not exist", {});
         std::ofstream(path, std::ios_base::trunc) << text;
     }
+
+    pid_t IsProcessRunning(std::string const &name)
+    {
+        for (auto const &entity : std::filesystem::directory_iterator("/proc"))
+        {
+            try
+            {
+                if (entity.is_symlink() || !entity.is_directory() || !exists(entity.path() / "exe"))
+                    continue;
+
+                std::filesystem::path exe_path = read_symlink(entity.path() / "exe");
+                if (exe_path.filename() == name)
+                    return std::stoi(entity.path().filename());
+            }
+            catch (std::filesystem::filesystem_error const &)
+            {
+               // most likely ACCCESS DENIED to other users' processes
+            }
+        }
+
+        return -1;
+    }
+
 }
 
 #ifndef DOCTEST_CONFIG_DISABLE

@@ -19,6 +19,8 @@
 #include "string_utils.hpp"
 #include "ui_mod.hpp"
 
+#include "std_utils.hpp"
+
 MainWindow::MainWindow(std::unique_ptr<ARMA3::Client> client, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -33,12 +35,14 @@ MainWindow::MainWindow(std::unique_ptr<ARMA3::Client> client, QWidget *parent) :
     client_->RefreshMods();
     for (auto const &i : client_->mods_workshop_)
         add_item(*ui->table_workshop_mods, {false, i.GetValueOrReturnDefault("name", "cannot read name"),
-                 i.GetValueOrReturnDefault("publishedid",
-                                           "cannot read id")});
+                                            i.GetValueOrReturnDefault("publishedid",
+                                                    "cannot read id")
+                                           });
 
     for (auto const &i : client_->mods_home_)
         add_item(*ui->table_custom_mods, {false, i.GetValueOrReturnDefault("name", "cannot read name"),
-                 StringUtils::Replace(i.path_, client_->GetPath().string(), "~arma")});
+                                          StringUtils::Replace(i.path_, client_->GetPath().string(), "~arma")
+                                         });
 }
 
 MainWindow::~MainWindow()
@@ -53,7 +57,7 @@ void MainWindow::set_client(std::unique_ptr<ARMA3::Client> client)
 
 void MainWindow::on_pushButton_clicked()
 {
-    auto find_mod = [this](std::string workshop_id)
+    auto find_mod = [this](std::string const & workshop_id)
     {
         for (auto const &mod : client_->mods_workshop_)
             if (mod.GetValueOrReturnDefault("publishedid", "-1") == workshop_id)
@@ -61,22 +65,41 @@ void MainWindow::on_pushButton_clicked()
         return std::optional<Mod>();
     };
 
+    auto find_custom_mod = [this](std::string const & path)
+    {
+        for (auto const &mod : client_->mods_custom_)
+            if (mod.path_ == path)
+                return std::optional<Mod>(mod);
+
+        for (auto const &mod : client_->mods_home_)
+            if (mod.path_ == path)
+                return std::optional<Mod>(mod);
+        return std::optional<Mod>();
+    };
+
     std::vector<Mod> mods;
     for (auto const &mod : get_mods(*ui->table_workshop_mods))
-    {
         if (mod.enabled)
         {
             auto mod_2 = find_mod(mod.path_or_workshop_id);
             if (mod_2.has_value())
                 mods.push_back(*mod_2);
         }
-    }
-    client_->CreateArmaCfg(mods);
+
+    for (auto const &mod : get_mods(*ui->table_custom_mods))
+        if (mod.enabled)
+        {
+            auto mod_2 = find_custom_mod(StringUtils::Replace(mod.path_or_workshop_id, "~arma", client_->GetPath()));
+            if (mod_2.has_value())
+                mods.push_back(*mod_2);
+        }
+
+    client_->CreateArmaCfg(mods, "/home/muttley/mods.cpp");
     return;
-    client_->Start("");
+    client_->Start("-nolauncher");
 }
 
-void MainWindow::add_item(QTableWidget &table_widget, UiMod const& mod)
+void MainWindow::add_item(QTableWidget &table_widget, UiMod const &mod)
 {
     int id = table_widget.rowCount();
     table_widget.insertRow(id);
@@ -121,7 +144,8 @@ std::vector<UiMod> MainWindow::get_mods(QTableWidget &table_widget)
 {
     std::vector<UiMod> mods;
 
-    for (int i = 0; i < table_widget.rowCount(); ++i) {
+    for (int i = 0; i < table_widget.rowCount(); ++i)
+    {
         auto cell_widget = table_widget.cellWidget(i, 0);
         auto checkbox = cell_widget->findChild<QCheckBox *>();
 
@@ -133,9 +157,24 @@ std::vector<UiMod> MainWindow::get_mods(QTableWidget &table_widget)
     return mods;
 }
 
-void MainWindow::checkbox_changed(int state)
+void MainWindow::checkbox_changed(int /*check_state, but we don't care*/)
 {
-    fmt::print("tzytze: {}\n", state);
-    add_item(*ui->table_custom_mods, {false, "XDDD", "Hello there"});
-    std::cout.flush();
+    int workshop_mods = 0;
+    int custom_mods = 0;
+
+    for (auto const &mod : get_mods(*ui->table_workshop_mods))
+        if (mod.enabled)
+            ++workshop_mods;
+
+    for (auto const &mod : get_mods(*ui->table_custom_mods))
+        if (mod.enabled)
+            ++custom_mods;
+
+    ui->label_selected_mods->setText(fmt::format("Selected {} mods ({} from workshop, {} custom)",
+                                     workshop_mods + custom_mods, workshop_mods, custom_mods).c_str());
+}
+
+void MainWindow::on_button_add_custom_mod_clicked()
+{
+    fmt::print("is running: {}\n", StdUtils::IsProcessRunning("arma3-unix-launcher"));
 }

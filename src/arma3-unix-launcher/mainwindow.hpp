@@ -27,13 +27,15 @@ class MainWindow : public QMainWindow
 
         void on_pushButton_clicked();
 
+        void on_button_add_custom_mod_clicked();
+
     private:
         Ui::MainWindow *ui;
 
         std::unique_ptr<ARMA3::Client> client_;
 
-        void add_item(QTableWidget &table_widget, UiMod const& mod);
-        void initialize_table_widget(QTableWidget &table_widget, QStringList const& column_names);
+        void add_item(QTableWidget &table_widget, UiMod const &mod);
+        void initialize_table_widget(QTableWidget &table_widget, QStringList const &column_names);
 
         std::vector<UiMod> get_mods(QTableWidget &table_widget);
 

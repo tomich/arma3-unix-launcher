@@ -62,7 +62,7 @@ void Mod::ParseCPP(std::string const &text)
 #include <doctest.h>
 #include "tests.hpp"
 
-std::ostream &operator<< (std::ostream &os, const std::map<std::string, std::string> key_value)
+std::ostream &operator<< (std::ostream &os, std::map<std::string, std::string> const &key_value)
 {
     os << "\nMap begin:\n";
     for (auto const& [key, value] : key_value)

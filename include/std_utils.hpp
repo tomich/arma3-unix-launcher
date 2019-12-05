@@ -42,6 +42,7 @@ namespace StdUtils
     std::vector<std::string> Ls(std::filesystem::path const &path, bool set_lowercase = false);
     std::string FileReadAllText(std::filesystem::path const &path);
     void FileWriteAllText(std::filesystem::path const &path, std::string const &text);
+    pid_t IsProcessRunning(std::string const &name);
 }
 
 #endif
