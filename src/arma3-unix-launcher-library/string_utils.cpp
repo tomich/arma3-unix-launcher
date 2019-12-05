@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <iostream>
 
+#include <fmt/format.h>
+
 namespace StringUtils
 {
     size_t find_last_nth(std::string const &text, char const c, int count = 1)
@@ -103,13 +105,13 @@ namespace StringUtils
         return text;
     }
 
-    std::filesystem::path ToWindowsPath(std::filesystem::path const &path)
+    std::filesystem::path ToWindowsPath(std::filesystem::path const &path, char const drive_letter)
     {
         if (path.empty())
             return path;
         std::string path_str = Replace(path.c_str(), "/", "\\");
         if (path.is_absolute())
-            return "C:" + path_str;
+            return fmt::format("{}:{}", drive_letter, path_str);
         return path_str;
     }
 }
@@ -261,8 +263,18 @@ TEST_CASE("ToWindowsPath")
     SUBCASE("Absolute path")
     {
         path linux_path{"/dir1/dir2/file.cpp"};
-        path windows_path{R"(C:\dir1\dir2\file.cpp)"};
-        CHECK_EQ(windows_path, ToWindowsPath(linux_path));
+
+        SUBCASE("Default drive")
+        {
+            path windows_path{R"(C:\dir1\dir2\file.cpp)"};
+            CHECK_EQ(windows_path, ToWindowsPath(linux_path));
+        }
+
+        SUBCASE("Custom drive")
+        {
+            path windows_path{R"(Z:\dir1\dir2\file.cpp)"};
+            CHECK_EQ(windows_path, ToWindowsPath(linux_path, 'Z'));
+        }
     }
 }
 

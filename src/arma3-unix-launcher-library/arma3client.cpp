@@ -100,6 +100,11 @@ namespace ARMA3
         FileWriteAllText(cfg_path, stripped_config);
     }
 
+    bool Client::IsProton()
+    {
+        return path_executable_.filename() == "arma3_x64.exe";
+    }
+
     void Client::Start(std::string const &arguments)
     {
         system(("steam -applaunch 107410 " + arguments).c_str());

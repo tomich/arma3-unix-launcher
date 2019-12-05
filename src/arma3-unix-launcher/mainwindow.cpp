@@ -6,6 +6,7 @@
 #include <QCheckBox>
 #include <QMessageBox>
 #include <QTabBar>
+#include <QTimer>
 
 #include <QResizeEvent>
 
@@ -43,6 +44,9 @@ MainWindow::MainWindow(std::unique_ptr<ARMA3::Client> client, QWidget *parent) :
         add_item(*ui->table_custom_mods, {false, i.GetValueOrReturnDefault("name", "cannot read name"),
                                           StringUtils::Replace(i.path_, client_->GetPath().string(), "~arma")
                                          });
+
+    connect(&arma_status_checker, &QTimer::timeout, this, QOverload<>::of(&MainWindow::check_if_arma_is_running));
+    arma_status_checker.start(2000);
 }
 
 MainWindow::~MainWindow()
@@ -180,5 +184,15 @@ void MainWindow::checkbox_changed(int)
 
 void MainWindow::on_button_add_custom_mod_clicked()
 {
-    fmt::print("is running: {}\n", StdUtils::IsProcessRunning("arma3-unix-launcher"));
+  fmt::print("is running: {}\n", StdUtils::IsProcessRunning("arma3-unix-launcher"));
+}
+
+void MainWindow::check_if_arma_is_running()
+{
+  std::string text = "Status: ArmA 3 is not running";
+  for (auto const& executable_name : ARMA3::Definitions::executable_names)
+    if (auto pid = StdUtils::IsProcessRunning(executable_name); pid != -1)
+      text = fmt::format("Status: ArmA 3 is running, PID: {}", pid);
+
+  ui->label_arma_status->setText(QString::fromStdString(text));
 }

@@ -41,6 +41,7 @@ namespace ARMA3
 
             bool CreateSymlinkToWorkshop();
             void CreateArmaCfg(std::vector<Mod> const &mod_list, std::filesystem::path cfg_path = "");
+            bool IsProton();
             bool RefreshMods();
             void Start(std::string const &arguments);
             void AddCustomMod(std::filesystem::path const &path);

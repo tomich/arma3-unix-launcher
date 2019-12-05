@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QTableWidgetItem>
+#include <QTimer>
 
 #include <arma3client.hpp>
 
@@ -29,8 +30,11 @@ class MainWindow : public QMainWindow
 
         void on_button_add_custom_mod_clicked();
 
+        void check_if_arma_is_running();
+
     private:
         Ui::MainWindow *ui;
+        QTimer arma_status_checker;
 
         std::unique_ptr<ARMA3::Client> client_;
 

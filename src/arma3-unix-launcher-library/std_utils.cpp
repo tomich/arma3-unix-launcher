@@ -52,8 +52,12 @@ namespace StdUtils
                     continue;
 
                 std::filesystem::path exe_path = read_symlink(entity.path() / "exe");
+
+                using StringUtils::trim;
                 if (exe_path.filename() == name)
                     return std::stoi(entity.path().filename());
+                else if (exe_path.filename() == "wine64-preloader" && trim(FileReadAllText(entity.path() / "comm")) == name)
+                  return std::stoi(entity.path().filename());
             }
             catch (std::filesystem::filesystem_error const &)
             {

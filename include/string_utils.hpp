@@ -19,7 +19,7 @@ namespace StringUtils
 
     std::string Lowercase(std::string text);
 
-    std::filesystem::path ToWindowsPath(std::filesystem::path const &path);
+    std::filesystem::path ToWindowsPath(std::filesystem::path const &path, char const drive_letter = 'C');
 
     constexpr std::string_view trim_left(std::string_view text,
                                          std::string_view const to_trim = std::string_view(" \n\r\t\0", 5))
