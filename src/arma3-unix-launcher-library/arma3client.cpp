@@ -165,7 +165,7 @@ namespace ARMA3
 
     std::string Client::PickModName(Mod const &mod, std::vector<std::string> const &names)
     {
-        TODO_BEFORE(11, 2019, "Pick mod name from workshop");
+        TODO_BEFORE(01, 2020, "Pick mod name from workshop");
         for (auto const &name : names)
         {
             if (ContainsKey(mod.KeyValue, name))

@@ -57,7 +57,7 @@ void MainWindow::set_client(std::unique_ptr<ARMA3::Client> client)
 
 void MainWindow::on_pushButton_clicked()
 {
-    auto find_mod = [this](std::string const & workshop_id)
+    auto find_mod_workshop = [this](std::string const& workshop_id)
     {
         for (auto const &mod : client_->mods_workshop_)
             if (mod.GetValueOrReturnDefault("publishedid", "-1") == workshop_id)
@@ -65,15 +65,15 @@ void MainWindow::on_pushButton_clicked()
         return std::optional<Mod>();
     };
 
-    auto find_custom_mod = [this](std::string const & path)
+    auto find_mod_custom = [this](std::string path)
     {
         for (auto const &mod : client_->mods_custom_)
-            if (mod.path_ == path)
+            if (mod.path_ == StringUtils::Replace(path, "~arma", client_->GetPath()))
+                return std::optional<Mod>(mod);
+        for (auto const &mod : client_->mods_home_)
+            if (mod.path_ == StringUtils::Replace(path, "~arma", client_->GetPath()))
                 return std::optional<Mod>(mod);
 
-        for (auto const &mod : client_->mods_home_)
-            if (mod.path_ == path)
-                return std::optional<Mod>(mod);
         return std::optional<Mod>();
     };
 
@@ -81,7 +81,7 @@ void MainWindow::on_pushButton_clicked()
     for (auto const &mod : get_mods(*ui->table_workshop_mods))
         if (mod.enabled)
         {
-            auto mod_2 = find_mod(mod.path_or_workshop_id);
+            auto mod_2 = find_mod_workshop(mod.path_or_workshop_id);
             if (mod_2.has_value())
                 mods.push_back(*mod_2);
         }
@@ -89,7 +89,7 @@ void MainWindow::on_pushButton_clicked()
     for (auto const &mod : get_mods(*ui->table_custom_mods))
         if (mod.enabled)
         {
-            auto mod_2 = find_custom_mod(StringUtils::Replace(mod.path_or_workshop_id, "~arma", client_->GetPath()));
+            auto mod_2 = find_mod_custom(StringUtils::Replace(mod.path_or_workshop_id, "~arma", client_->GetPath()));
             if (mod_2.has_value())
                 mods.push_back(*mod_2);
         }
@@ -157,21 +157,25 @@ std::vector<UiMod> MainWindow::get_mods(QTableWidget &table_widget)
     return mods;
 }
 
-void MainWindow::checkbox_changed(int /*check_state, but we don't care*/)
+void MainWindow::checkbox_changed(int)
 {
-    int workshop_mods = 0;
-    int custom_mods = 0;
+    auto workshop_mods = get_mods(*ui->table_workshop_mods);
+    auto custom_mods = get_mods(*ui->table_custom_mods);
 
-    for (auto const &mod : get_mods(*ui->table_workshop_mods))
+    int count_workshop = 0;
+    int count_custom = 0;
+
+    for (auto const& mod : workshop_mods)
         if (mod.enabled)
-            ++workshop_mods;
+            ++count_workshop;
 
-    for (auto const &mod : get_mods(*ui->table_custom_mods))
+    for (auto const& mod : custom_mods)
         if (mod.enabled)
-            ++custom_mods;
+            ++count_custom;
 
-    ui->label_selected_mods->setText(fmt::format("Selected {} mods ({} from workshop, {} custom)",
-                                     workshop_mods + custom_mods, workshop_mods, custom_mods).c_str());
+    auto text = fmt::format("Selected {} mods ({} from workshop, {} custom)", count_workshop + count_custom, count_workshop, count_custom);
+
+    ui->label_selected_mods->setText(QString::fromStdString(text));
 }
 
 void MainWindow::on_button_add_custom_mod_clicked()
