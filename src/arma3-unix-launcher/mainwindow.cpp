@@ -61,7 +61,7 @@ void MainWindow::set_client(std::unique_ptr<ARMA3::Client> client)
 
 void MainWindow::on_pushButton_clicked()
 {
-    auto find_mod_workshop = [this](std::string const& workshop_id)
+    auto find_mod_workshop = [this](std::string const & workshop_id)
     {
         for (auto const &mod : client_->mods_workshop_)
             if (mod.GetValueOrReturnDefault("publishedid", "-1") == workshop_id)
@@ -169,30 +169,30 @@ void MainWindow::checkbox_changed(int)
     int count_workshop = 0;
     int count_custom = 0;
 
-    for (auto const& mod : workshop_mods)
+    for (auto const &mod : workshop_mods)
         if (mod.enabled)
             ++count_workshop;
 
-    for (auto const& mod : custom_mods)
+    for (auto const &mod : custom_mods)
         if (mod.enabled)
             ++count_custom;
 
-    auto text = fmt::format("Selected {} mods ({} from workshop, {} custom)", count_workshop + count_custom, count_workshop, count_custom);
-
+    auto text = fmt::format("Selected {} mods ({} from workshop, {} custom)", count_workshop + count_custom, count_workshop,
+                            count_custom);
     ui->label_selected_mods->setText(QString::fromStdString(text));
 }
 
 void MainWindow::on_button_add_custom_mod_clicked()
 {
-  fmt::print("is running: {}\n", StdUtils::IsProcessRunning("arma3-unix-launcher"));
+    fmt::print("is running: {}\n", StdUtils::IsProcessRunning("arma3-unix-launcher"));
 }
 
 void MainWindow::check_if_arma_is_running()
 {
-  std::string text = "Status: ArmA 3 is not running";
-  for (auto const& executable_name : ARMA3::Definitions::executable_names)
-    if (auto pid = StdUtils::IsProcessRunning(executable_name); pid != -1)
-      text = fmt::format("Status: ArmA 3 is running, PID: {}", pid);
+    std::string text = "Status: Arma 3 is not running";
+    for (auto const &executable_name : ARMA3::Definitions::executable_names)
+        if (auto pid = StdUtils::IsProcessRunning(executable_name); pid != -1)
+            text = fmt::format("Status: Arma 3 is running, PID: {}", pid);
 
-  ui->label_arma_status->setText(QString::fromStdString(text));
+    ui->label_arma_status->setText(QString::fromStdString(text));
 }

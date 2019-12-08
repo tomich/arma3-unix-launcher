@@ -43,6 +43,7 @@ namespace StdUtils
     std::string FileReadAllText(std::filesystem::path const &path);
     void FileWriteAllText(std::filesystem::path const &path, std::string const &text);
     pid_t IsProcessRunning(std::string const &name);
+    std::filesystem::path GetConfigFilePath(std::filesystem::path const &config_filename);
 }
 
 #endif

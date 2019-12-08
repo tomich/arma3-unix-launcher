@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>ArmA 3 Unix Launcher</string>
+   <string>Arma 3 Unix Launcher</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -39,7 +39,7 @@
          </font>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab">
          <attribute name="title">
@@ -173,7 +173,7 @@
               <item>
                <widget class="QLabel" name="label_arma_status">
                 <property name="text">
-                 <string>Status: Arma 3 not running</string>
+                 <string>Status: Arma 3 is not running</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>

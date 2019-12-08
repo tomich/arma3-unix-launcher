@@ -35,7 +35,7 @@ namespace StdUtils
         return str.str();
     }
 
-    void FileWriteAllText(std::filesystem::path const &path, const std::string &text)
+    void FileWriteAllText(std::filesystem::path const &path, std::string const &text)
     {
         if (!exists(path.parent_path()))
             throw std::filesystem::filesystem_error("Parent dir does not exist", {});
@@ -57,15 +57,26 @@ namespace StdUtils
                 if (exe_path.filename() == name)
                     return std::stoi(entity.path().filename());
                 else if (exe_path.filename() == "wine64-preloader" && trim(FileReadAllText(entity.path() / "comm")) == name)
-                  return std::stoi(entity.path().filename());
+                    return std::stoi(entity.path().filename());
             }
             catch (std::filesystem::filesystem_error const &)
             {
-               // most likely ACCCESS DENIED to other users' processes
+                // most likely ACCCESS DENIED to other users' processes
             }
         }
 
         return -1;
+    }
+
+    std::filesystem::path GetConfigFilePath(std::filesystem::path const &config_filename)
+    {
+        std::filesystem::path config_directory = fmt::format("{}/.config/a3unixlauncher", getenv("HOME"));
+
+        auto xdg_config_home = getenv("XDG_CONFIG_HOME");
+        if (xdg_config_home)
+            config_directory = fmt::format("{}/a3unixlauncher", xdg_config_home);
+
+        return config_directory / config_filename;
     }
 
 }
@@ -198,7 +209,40 @@ TEST_CASE("FileWriteAllText")
     }
 }
 
+TEST_CASE("GetConfigFilePath")
+{
+    using namespace StdUtils;
 
+    GIVEN("Filename to get config path for")
+    {
+        std::filesystem::path config_file = "a3unixlauncher.cfg";
+
+        WHEN("XDG_CONFIG_HOME is not set")
+        {
+            REQUIRE_EQ(0, unsetenv("XDG_CONFIG_HOME"));
+
+            auto path = GetConfigFilePath(config_file);
+
+            THEN("$HOME/.config is used")
+            {
+                CHECK_EQ(fmt::format("{}/.config/a3unixlauncher/{}", getenv("HOME"), config_file.string()), path);
+            }
+        }
+
+        WHEN("XDG_CONFIG_HOME is set")
+        {
+            std::filesystem::path xdg_config_home = "/configs";
+            REQUIRE_EQ(0, setenv("XDG_CONFIG_HOME", xdg_config_home.string().c_str(), 1));
+
+            auto path = GetConfigFilePath(config_file);
+
+            THEN("XDG_CONFIG_HOME is used")
+            {
+                CHECK_EQ(fmt::format("{}/a3unixlauncher/{}", xdg_config_home.string(), config_file.string()), path);
+            }
+        }
+    }
+}
 
 TEST_SUITE_END();
 
