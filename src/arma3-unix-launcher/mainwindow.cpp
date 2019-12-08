@@ -15,17 +15,20 @@
 
 #include <fmt/format.h>
 #include <fmt/ostream.h>
-#include <nlohmann/json.hpp>
 
 #include "string_utils.hpp"
 #include "ui_mod.hpp"
 
 #include "std_utils.hpp"
 
-MainWindow::MainWindow(std::unique_ptr<ARMA3::Client> client, QWidget *parent) :
+MainWindow::MainWindow(std::unique_ptr<ARMA3::Client> client, std::filesystem::path const &config_file,
+                       QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    config_file_ = config_file;
+    //settings = nlohmann::json::parse(StdUtils::FileReadAllText(config_file_));
+
     ui->setupUi(this);
 
     initialize_table_widget(*ui->table_workshop_mods, {"Enabled", "Name", "Workshop ID"});

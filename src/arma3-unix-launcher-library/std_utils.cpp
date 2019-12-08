@@ -8,7 +8,11 @@ namespace StdUtils
 {
     bool CreateFile(std::filesystem::path const &path)
     {
-        return creat(path.c_str(), 0644);
+        auto result = open(path.c_str(), O_CREAT | O_WRONLY, 0644);
+        if (result == -1)
+            return false;
+        close(result);
+        return true;
     }
 
     std::vector<std::string> Ls(std::filesystem::path const &path, bool set_lowercase)
