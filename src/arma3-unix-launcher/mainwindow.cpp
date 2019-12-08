@@ -27,7 +27,7 @@ MainWindow::MainWindow(std::unique_ptr<ARMA3::Client> client, std::filesystem::p
     ui(new Ui::MainWindow)
 {
     config_file_ = config_file;
-    //settings = nlohmann::json::parse(StdUtils::FileReadAllText(config_file_));
+    settings_ = nlohmann::json::parse(StdUtils::FileReadAllText(config_file_));
 
     ui->setupUi(this);
 

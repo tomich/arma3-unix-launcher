@@ -41,7 +41,7 @@ class MainWindow : public QMainWindow
         std::unique_ptr<ARMA3::Client> client_;
 
         std::filesystem::path config_file_;
-        //nlohmann::json settings;
+        nlohmann::json settings_;
 
         void add_item(QTableWidget &table_widget, UiMod const &mod);
         void initialize_table_widget(QTableWidget &table_widget, QStringList const &column_names);
